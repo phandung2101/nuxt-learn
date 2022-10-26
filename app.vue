@@ -7,13 +7,23 @@ interface OptionsState {
   length: Length;
 }
 
-const defaultOption: OptionsState = {
-  gender: Gender.UNISEX,
+const options = reactive<OptionsState>({
+  gender: Gender.GIRL,
+  length: Length.SHORT,
   popularity: Popularity.TRENDY,
-  length: Length.ALL,
+});
+const computeSelectedNames = () => {
+  const filterdNames = names
+    .filter((name) => name.gender === options.gender)
+    .filter((name) => name.popularity === options.popularity)
+    .filter((name) => {
+      if (options.length === Length.ALL) return true;
+      else return name.length === options.length;
+    });
+
+  selectedNames.value = filterdNames.map((name) => name.name);
 };
 
-const options = reactive<OptionsState>(defaultOption);
 const selectedNames = ref<string[]>([]);
 </script>
 
@@ -93,7 +103,7 @@ const selectedNames = ref<string[]>([]);
           </button>
         </div>
       </div>
-      <button class="primary">Find Names</button>
+      <button class="primary" @click="computeSelectedNames">Find Names</button>
     </div>
     <div>{{ selectedNames }}</div>
   </div>
